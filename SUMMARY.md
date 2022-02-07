@@ -50,6 +50,7 @@
        ny= y+dy[i]
        print(nx, ny)
      ```
+
 # 그래프 탐색 알고리즘_ DFS/BFS
 - 탐색(Search)이란 많은 양의 데이터 중에서 원하는 데이터를 찾는 것
 - 코딩테스트에서 자주 등장하는 유형
@@ -133,3 +134,150 @@
               visited[i]= True
               queue.append(i)
     ```
+
+# 정렬 알고리즘
+- 데이터를 특정 기준에 따라 순서대로 나열한 것
+
+## 1. 선택 정렬
+  - 처리되지 않은 데이터 중에서 가장 작은 데이터를 선택해 맨 앞에 있는 것과 바꿈
+  ``` python
+  #myCode#############################################################################
+  data=[7, 5, 9, 0, 3, 1, 6, 2, 4, 8]
+  for i in range(len(data)-1):
+    minValue= data[i]
+    minIndex= i
+    for j in range(i+ 1, len(data)):
+      if minValue> data[j]:
+        minValue= data[j]
+        minIndex= j
+    data[i], data[minIndex]= minValue, data[i]
+
+  #lectureCode########################################################################
+  for i in range(len(data)):
+    min_index= i
+    for j in range(i+1, len(data)):
+      if array[min_index]> data[j]:
+        min_index= j
+    data[i], data[min_indx]= data[min_index], data[i]
+    
+  ```
+  - n번만큼 가장 작은 수를찾아서 맨 앞으로 보냄
+  - 전체 연산 횟수는 (N^2+ N -2)/2,  시간 복잡도는 O(N^2)
+  
+## 2. 삽입정렬
+  - 처리되지 않은 데이터를 하나씩 골라 적절한 위치에 삽입
+    - 두번째 데이터부터 앞쪽에 있는 원소와 비교하여 왼쪽으로 이동
+  - 선택 정렬과 비교하여 구현이 어렵지만 더 효율적으로 동작
+  ```python
+  data= [7, 5, 9, 0, 3, 1, 6, 2, 4, 8]
+  #myCode#############################################################################
+  for i in range(1, len(data)):
+    for j in range(i-1, -1, -1):
+      if data[i]> data[j]:
+        iValue= data.pop(i)
+        data.insert(j+1, iValue)
+        break
+      elif data[i]<data[0]:
+        iValue= data.pop(i)
+        data.insert(0, iValue)
+        break
+  #lectureCode########################################################################
+  for i in range(1, len(data)):
+    for j in range(i, 0, -1):
+      if data[j]<data[j-1]>:
+        data[j], data[j-1]= data[j-1], data[j]
+      else:
+        break
+  ```
+  - 시간 복잡도는 O(N^2)
+  - 현재 리스트의 데이터가 거의 정렬되어 있는 경우, 매우 빠르게 동작함
+    - 전부 정렬되어 있는 경우, O(N)임_ 왼쪽 원소만 비교하기 때문에 
+
+## 3. 퀵 정렬
+  - 기준 데이터를 설정한 뒤, 해당 데이터보다 큰 데이터와 작은 데이터의 위치를 변경
+  - 일반적인 상황에서 가장 많이 사용됨
+  
+    - 첫번째 데이터를 기준 데이터(Pivot)으로 설정
+    - 왼쪽에서부터 Pivot보다 큰 값 선택, 오른쪽에서부터 Pivot보다 작은 값 선택해서 서로 위치 변경
+    - 위치가 엇갈리는 경우, Pivot과 작은 데이터의 위치를 서로 변경_ Pivot값 기준으로 오른쪽은 값이 크고 왼쪽은 값이 작음: 분할(Pivot을 기준으로 데이터 묶음을 나누는 작업)
+    - 각 묶음을 다시 퀵정렬 수행
+  ```python
+  data= [7, 5, 9, 0, 3, 1, 6, 2, 4, 8]
+  #myCode#############################################################################
+  #lectureCode########################################################################
+  def quick_sort(data, start, end):
+    if start>= end:
+      return
+
+    pivot= start
+    left= start+ 1
+    right= end
+
+    while(left<= right):
+      while(left<= end and data[left]<= data[pivot]): #PIVOT보다 큰 값을 찾을 떄까지
+        left+= 1
+      while(right> start and data[right]>= data[pivot]): #PIVOT보다 작은 값을 찾을 떄까지
+        right_= 1
+      if (left> right): #엇갈렸으면 작은 값과 PIVOT 교체
+        data[right], data[pivot]= data[pivot], data[right]
+      else: # 작은 값과 큰 값 교체
+        data[left], data[right]= data[right], data[left]
+
+    # 분할 후 왼쪽과 오른쪽부분에서 정렬 수행
+    quick_sort(data, start, right- 1)
+    quick_sort(data, right+ 1, end)
+
+    
+    #PYTHON의 장점을 살린 CODE#############################################################
+    def quick_sort(data):
+      if len(data)<= 1:
+        return data
+      pivot= data[0]
+      tail=[1:]
+
+      left_side= [x for x in tail if x<= pivot]
+      right_side= [x for x in tail if x> pivot]
+
+      return quock_sort(left_side)+ [pivot]+ quick_sort(right_side)Sz
+  ```
+  - 이상적인 경우, 분할이 절반씩 일어나고 전체 연산 횟수는 O(NlogN)
+  - 평균의 경우, 시간복잡도: O(NlogN) 최악의 경우, O(N^2)
+    - 첫번째 원소를 Pivot으로 설정하고 이미 정렬되 배열에 대해 퀵 정렬을 수행시,  매번 오른쪽 데이터만 남기 때문에 매번 선형 탐색을 수행함
+  
+## 4. 계수 정렬
+  - 데이터의 크기 범위가 제한되어 정수 형태로 표현할 수 있을 때 사용 가능
+  - 조건이 부합하는 경우에만 사용가능, 매우 빠르게 동작
+    - 데이터의 개수가 N, 데이터(양수) 중 최댓값이 K일 때, 촤악의 경우에도 수행시간 O(N+K) 보장
+```python
+  data= [7, 5, 9, 0, 3, 1, 6, 2, 9, 1, 4, 8, 0, 5, 2]
+  #myCode#############################################################################
+  check=[0]* 10
+  for i in data:
+    check[i]+= 1
+
+  for i in range(len(check)):
+    print(str(i)*check[i], end="")
+
+  #lectureCode########################################################################
+  #모든 범위를 포함하는 리스트 선언
+  count= [0]*(max(data)+1)
+
+  for i in range(len(data)):
+    count[data[i]]+= 1 #각 데이터에 해당하는 인덱스의 값 증가
+
+  for i in range(len(count)): #리스트에 기록된 정렬 정보 확인
+    for j in range(count[i]):
+      print(i. end=" ")
+```
+- 가장 작은 값부터 큰 값까지 포함하는 배열을 생성해 공간 복잡도가 높지만, 퀵정렬과 비교하여 조건만 맞는다면 더 빨리 작동함
+- 정렬 정보를 확인하는 이중반복문에서 j반복문은 전체 수행 횟수가 N이므로 이중 반복문의 수행횟수가 O(N+K)임
+  - 시간 복잡도와 공간 복잡도: O(N+K)
+- 동일한 값을 가지는 데이터가 여러 개 등장할 때 효과적으로 사용할 수 있음
+
+## 5. 정렬 알고리즘 비교
+  | 정렬 알고리즘|  평균 시간 복잡도| 공간 복잡도|  특징|
+  |-------------|-----------------|-----------|-----|
+  |선택 정렬| O(N^2)| O(N)| 아이디어가 매우 간단함|
+  |삽입 정렬| O(N^2)| O(N)| 데이터가 거의 정렬되어 있을 떄는 가장 빠름|
+  |퀵 정렬| O(NlogN)| O(N)| 대부분의 경우에 가장 적합하며, 충분히 빠름|
+  |계수 정렬| O(N+K)| O(N+K)| 데이터의 크기가 한정되어 있는 경우에만 사용가능하지만, 매우 빠르게 동작|
