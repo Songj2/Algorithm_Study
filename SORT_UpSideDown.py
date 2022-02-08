@@ -28,3 +28,14 @@ def quick(data, start, end):
 # data.sort(reverse=True)
 for i in data:
     print(i, end=" ")
+#########################################################
+n= int(input())
+array=[]
+
+for i in range(n):
+    array.append(int(input()))
+
+array= sorted(array, reverse=True)
+
+for i in array:
+    print(i, end=" ")
