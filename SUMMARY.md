@@ -281,3 +281,71 @@
   |삽입 정렬| O(N^2)| O(N)| 데이터가 거의 정렬되어 있을 떄는 가장 빠름|
   |퀵 정렬| O(NlogN)| O(N)| 대부분의 경우에 가장 적합하며, 충분히 빠름|
   |계수 정렬| O(N+K)| O(N+K)| 데이터의 크기가 한정되어 있는 경우에만 사용가능하지만, 매우 빠르게 동작|
+
+
+# 이진 탐색
+  - 순차 탐색: 리스트 안에 특정 데이터를 찾기 위해 앞에서부터 데이터를 하나씩 확인하는 방식
+  - 이진 탐색: 정렬되어 있는 리스트에서 탐색 범위를 절반씩 좁혀가며 데이터를 탐색하는 방식
+    - 시작점과 중간점, 끝점을 이용해 탐색 범위 설정
+    - 1. 중간점은 끝점/2 소수점 이하 제거하여 찾음
+    - 2. 중간점의 값이 탐색 값보다 크면, 끝점을 중간점 왼쪽으로 옮기고 새로운 중간점 찾음
+    - 2. 중간점의 값이 탐색 값보다 작으면, 시작점을 중간점 오른쪽으로 옮기고 새로운 중간점 찾음
+    ```python
+    data=[0, 2, 4, 6, 8, 10, 12, 14, 16, 18]
+    #myCode#############################################################################
+    def sech(start, end, target):
+        mid= int((end-start)//2)+ start
+
+        if data[mid]== target:
+            return mid
+        elif data[mid]> target:
+            return sech(start, mid-1, target)
+        elif data[mid]< target:
+            return sech(mid+1, end, target)
+    #lectureCode######################################################################
+    ## 재귀함수 ver
+    def binary_search(array, target, start, end):
+      if start> end:
+        return None
+      mid= (start+end)//2
+      if array[mid]== target:
+        return mid
+
+      elif array[mid]> tagrget:
+        return binary_search(array, target, start, mid- 1)
+      else:
+        return binary_search(array, target, mid+1, end)
+
+    ## 반복문 ver
+    def binary_search(array, target, start, end):
+      while start<= end:
+        mid= (start+ end)//2
+        if array[mid]== target:
+          return mid
+        elif array[mid]> target:
+          end= mid- 1
+        else:
+          start= mid+ 1
+      return None
+
+
+    n, target= list(map(int, input().split()))
+    array= list(map(int, input().split()))
+
+    result= binary_search(array, target, 0, n-1)
+    if result== None:
+      print("원소가 존재하지 않습니다.")
+    else:
+      print(reslut+ 1)
+    #추가사항#########################################################################
+    from bisect import bisect_left, bisect_right
+
+    bisect_left(a, x) # 정렬된 순서를 유지하면서 배열 a에 x를 삽입할 가장 왼쪽 인덱스 반환
+    bisect_right(a, x) # 정렬된 순서를 유지하면서 배열 a에 x를 삽입할 가장 오른쪽 인덱스 반환
+    ```
+  - 단계마다 탐색 범위를 2로 나누는것과 동일함: 연산횟수는 log2의 ㅍN에 비례
+  - 시간복잡도: O(logN)
+  ## 파라메트릭 서치(Parametric Search)
+  - 최적화 문제를 결정(Y/N) 문제로 바꾸어 해결하는 기법
+    - 특정 조건을 만족하는 가장 알맞는 값을 빠르게 찾는 최적화 문제 등
+  - 일반적으로 코딩 테스트에서 이진 탐색을 이용하여 해결
