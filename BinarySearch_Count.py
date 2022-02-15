@@ -13,14 +13,22 @@ if result> 0:
 else:
     print(-1)
 
-######################################################
-n, x= map(int, input().split())
-data= list(map(int, input().split()))
-
+########################################################
+#직접 구현ver
 def search(data, x, start, end):
     if start> end:
         return
-    mid= (start+end)//2
+    mid= (start+ end)//2
 
     if data[mid]> x:
-        search(data, x, start, end)
+       return search(data, x, start, mid) 
+    elif data[mid]== x:
+        if data[start]!= x and data[end-1]!= x:
+            return search(data, x, start, mid), search(data, x, mid+1, end)
+        
+        return mid
+    else:
+        return search(data, x, mid+1, end)
+ss, ee=  search(data, x, 0, n)
+result= ee-ss+1
+print(result)
