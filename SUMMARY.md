@@ -421,3 +421,179 @@
     |-------------------|---------------------------------------------------|
     | 동일한 부분 문제가 반복적으로 계산되지 않음 | 각 부분 문제들이 서로 영향을 미치며 부분 문제가 중복됨|
   - 퀵 정렬의 경우,<br> 한번 Pivot이 자리르 변경해서 자리를 잡으면 기준 원소의 위치는 바뀌지 않음. <br>분할 이후에 해당 피벗을 다시 처리하는 부분 문제는 호출하지 않음. =>  분할 정복 
+
+# 최단 경로 알고리즘
+  - 가장 짧은 경로를 찾는 알고리즘
+  - Ex) 한 지점에서 다른 한 지점까지의 최단 경로|한 지점에서 다른 모든 지점까지의 최단 경로|모든 지점에서 다른 모든 지점까지의 최단 경로 등
+  - 각 지점은 그래프에서 노드로 표현
+  - 지점 간 연결된 도로는 그래프에서 간선으로 표현
+
+## 다익스트라 최단 경로 알고리즘
+  - 특정한 노드에서 출발하여 다른 모든 노드로 가는 최단 경로 계산
+  - 음의 간선이 없을 때 정상적으로 동작
+    - 현실세계의 도로는 음의 간선으로 표현되지 않음
+  - 그리디 알고리즘으로 분류 됨_일반적으로 최단 경로는 다이나믹 프로그램이이지만 다익스트라는 그리디로 분류됨.
+    - 매 상황에서 가장 비용이 적은 노드를 선택해 임의의 과정 반복
+  - 동작 과정
+    1. 출발 노드 설정
+    2. 촤단 거리 테이블 초기화_자기 자신은 0, 그외는 무한
+    3. 방문하지 않은 노드 중에서 최단 거리가 가장 짧은 노드 선택
+    4. 해당 노드를 거쳐 다른 노드로 가는 비용을 계산하여 최단거리 테이블 갱신
+    5. 3·4 과정 반복
+  - 특징
+    - 매 상황에서 방문하지 않은 가장 비용이 적은 노드를 선택해 임의의 과정을 반복
+    - 단계를 거치며 한 번 처리된 노드의 최단 거리는 고정되어 더이상 변경 되지 않음
+      - 한 단계당 하나의 노드에 대한 최단 거리를 확실히 찾는 것
+    - 다익스트라 수행 뒤, 테이블에 각 노드까지의 최단거리 정보가 저장
+    ```python 
+    # 다익스트라 알고리즘
+    import sys
+
+    input= sys.stdin.readline
+    INF= int(1e9)
+
+    n, m= int(input().split()) #노드의 개수, 간선의 개수 입력 받기
+    start- int(input()) #시작노드의 번호 입력받기
+    graph= [[]for i in range(n+ 1)] #각 노드에 연결되어 있는 노드에 대한 정보를 담는 리스트 만들기
+    visited= [false]*(n+ 1) #방문한 적이 있는지 체크하는 목적의 리스트 만들기
+    distance= [INF]*(n+ 1) #최단 거리 테이블을 모두 무한으로 초기화
+
+    #모든 간선 정보를 입력받기
+    for _in range(m):
+      a, b, c= map(int, input().split())
+      graph[a].append((b, c)) #a번 노드에서 b번 노드로 가는 비용이 c
+
+    #방문하지 않은 노드 중에서, 가장 최단 거리가 짧은 노드의 번호를 반환
+    def get_smallest_node():
+      min_value= INF
+      index= 0 #가장 최단 거리가 짧은 노드
+      for i in range(1, n+ 1):
+        if distance[i]< min_value and not visited[i]:
+          min_value= distance[i]
+          index= i
+      return index
+    
+    def dijkstra(start):
+      #시작 노드에 대해 초기화
+      distance[start]= 0
+      visited[start]= True
+      for j in garph[start]:
+        distance[j[0]]= j[1]
+
+      #시작 노드를 제외한 전체 N-1개의 노드에 대해 반복
+      for i in range(n- 1):
+        now= get_smallest_node() #현재 최단 거리가 가장 짧은 노드르 꺼내서 방문처리
+        visited[now]= True
+
+        #현재 노드와 연결된 다른 노드를 확인
+        for j in graph[now]:
+          cost= distance[now]+ j[i]
+          if cost< distance[j[0]]: #현재 노드를 거쳐서 다른 노드로 이동하는 거리가 더 짧은 경우
+            distance[j[0]]= cost
+
+    dijkstra(start)
+
+    for i in range(1, n+ 1):
+      if distance[i]== INF:
+        print("INFINITY")
+      else:
+        print(distance[i])
+
+    ```
+  - 성능 분석
+    - 총 O(V)번에 걸쳐서 최단 거리가 가장 짧은 노드를 매번 선형 탐색 해야 함
+    - 전체 시간 복잡도: O(V^2)
+  ### 우선순위 큐(Priority Queue)
+  - 우선순위가 가장 높은 데이터를 가장 먼저 삭제하는 자료구조
+  - 대부분의 프로그래밍 언어에서 표준 라이브러리 형태로 지원
+  - 
+     |자료구조|추출되는 데이터|
+     |-------|--------------|
+     |스택(Stack)|가장 나중에 삽입된 데이터|
+     |큐(Queue)| 가장 먼저 삽입된 데이터|
+     |우선순위 큐(Priority Queue)| 가장 우선순위가 높은 데이터|
+  ### 힙(Heap)
+  - 우선순위 큐를 구현하기 위해 사용하는 자료 구조 중 하나
+  - 최소 힙(Min Heap) · 최대 힙(Max Heap)
+  - |우선순위 큐 구현 방식| 삽입 시간| 삭제 시간|
+    |-------------------|---------|----------|
+    |리스트             | O(1)    | O(N)    |
+    |힙(Heap)           | O(logN) | O(logN)  |
+    ```python
+    import heapq
+    #최소 힙 
+    def heapsort(iterable):
+      h= []
+      result= []
+      for value in iterable:
+        heapq.heappush(h, value)
+      for i in range(len(h)):
+        result.append(heapq.heappop(h))
+      return result
+
+    result= heapsort([1, 3, 5, 7, 9, 2, 4, 6, 8, 0])
+    print(result) #[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    #최대 힙
+    def heapsort(iterable):
+      h= []
+      result= []
+      for value in iterable:
+        heapq.heappush(h, -value)
+      for i in range(len(h)):
+        result.append(-heapq.heappop(h))
+      return result
+
+    result= heapsort([1, 3, 5, 7, 9, 2, 4, 6, 8, 0])
+    print(result) #[9, 8, 7, 6, 5, 4, 3, 2, 2, 1, 0]
+    ```
+  ## 개선된 다익스트라
+  - 힙 자료구조를 이용
+   ```python 
+  import heapq
+  import sys
+
+  input= sys.stdin.readline
+  INF= int(1e9)
+
+  n, m= int(input().split()) #노드의 개수, 간선의 개수 입력 받기
+  start- int(input()) #시작노드의 번호 입력받기
+  graph= [[]for i in range(n+ 1)] #각 노드에 연결되어 있는 노드에 대한 정보를 담는 리스트 만들기
+  distance= [INF]*(n+ 1) #최단 거리 테이블을 모두 무한으로 초기화
+
+  #모든 간선 정보를 입력받기
+  for _in range(m):
+    a, b, c= map(int, input().split())
+    graph[a].append((b, c)) #a번 노드에서 b번 노드로 가는 비용이 c
+
+  def dijkstra(start):
+    q=[]
+    heqp,heappush(q, (0, start)) #시작 노드로 가ㄷ기 위한 최단 경로는 0으로 설정하여, 큐에 삽입
+    distance[start]= 0
+    while q: #큐가 비어있지 않다면
+      dist, now= heapq.heappop(q)
+      if distance[now]< dist: #현재 노드가 이미 처리된 적이 있는 노드라면 무시
+        continue
+      #현재 노드와 연결된 다른 인접한 노드를 확인
+      for i in graph[now]:
+        cost= dist+ i[1]
+        #현재 노드를 거쳐서, 다른 노드로 이동하는 거리가 더 짧은 경우
+        if cost< distance[i[0]]:
+          distance[i[0]]= cost
+          heapq.heappush(q, (cost, i[0]))
+
+  dijkstra(start)
+
+  for i in range(1, n+ 1):
+    if distance[i]== INF:
+      print("INFINITY")
+    else:
+      print(distance[i])
+   ```
+   - 성능 분석
+     - 시간 복잡도: O(ElogV)
+     - 노드를 하나씩 꺼내 검사하는 While문은 노드의 개수 V이상의 횟수로는 처리되지 않음
+       - 결과적으로 현재 우선순위 큐에서 꺼낸 노드와 연결된 다른 노드들을 확인하는 총 횟수는 최대 간선의 개수(E)만큼 연산이 수행될 수 있음
+       - 직관적으로 전체 과정은 E개의 원소를 우선순위 큐에 넣었다가 모두 빼내는 연산과 유사
+         - 시간 복잡도를 O(ElogE)로 판단할 수 있음
+         - 중복 간선을 포함하지 않는 경우: O(ElogV)
+           - O(ElogE)- O(ElogV^2)- O(2ElogV)- O(ElogV) 
